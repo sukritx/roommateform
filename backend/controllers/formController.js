@@ -27,7 +27,7 @@ const createForm = async (req, res) => {
 
 const getForms = async (req, res) => {
   try {
-    const { university, minPrice, maxPrice, ...filters } = req.query;
+    const { university, minPrice, maxPrice, faculty, year, ...filters } = req.query;
     let query = { isActive: true };
 
     if (university) {
@@ -40,8 +40,16 @@ const getForms = async (req, res) => {
       if (maxPrice) query['roomDetails.monthlyRent'].$lte = Number(maxPrice);
     }
 
+    if (faculty) {
+      query['owner.faculty'] = faculty;
+    }
+
+    if (year && !isNaN(year)) {
+      query['owner.year'] = Number(year);
+    }
+
     const forms = await Form.find(query)
-      .populate('owner', 'name email')
+      .populate('owner', 'name email contactInfo faculty year')
       .sort({ boostStatus: -1, publishDate: -1 });
 
     res.json(forms);
