@@ -13,7 +13,9 @@ const submissionSchema = new mongoose.Schema({
         platform: { type: String, enum: ['whatsapp', 'instagram', 'facebook', 'email', 'phone'], required: true },
         username: { type: String, required: true }
       }
-    ]
+    ],
+    faculty: { type: String, required: true },
+    year: { type: Number, required: true }
   },
   isRead: { type: Boolean, default: false }
 }, { timestamps: true });

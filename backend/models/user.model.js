@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     cleanliness: String,
     partying: String,
     hobbies: [String],
+    faculty: { type: String, required: true },
+    year: { type: Number, required: true },
     contactInfo: { ig: String },
     createdForms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }],
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }],
