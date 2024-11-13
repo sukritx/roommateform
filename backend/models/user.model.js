@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     morningOrLateNight: String,
     cleanliness: String,
     partying: String,
+    smoking: String,
     hobbies: [String],
     faculty: { type: String },
     year: { type: Number },

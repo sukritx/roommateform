@@ -19,6 +19,7 @@ const formSchema = new mongoose.Schema({
       morningOrLateNight: String,
       cleanliness: String,
       partying: String,
+      smoking: String,
       hobbies: [String]
     },
     filters: {
