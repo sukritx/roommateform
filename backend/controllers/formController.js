@@ -4,14 +4,18 @@ const Payment = require('../models/payment.model');
 
 const createForm = async (req, res) => {
   try {
+    const formData = JSON.parse(req.body.data);
+    
+    // Get the image URL from the file-upload middleware
+    const imageUrl = req.file?.location;
+
     const form = new Form({
       owner: req.user.id,
-      roomDetails: req.body.roomDetails,
-      ownerDetails: req.body.ownerDetails,
-      filters: req.body.filters,
-      publishDate: new Date(),
-      expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      location: req.body.location
+      ...formData,
+      roomDetails: {
+        ...formData.roomDetails,
+        images: imageUrl ? [imageUrl] : []
+      }
     });
 
     const savedForm = await form.save();

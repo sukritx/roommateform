@@ -10,6 +10,8 @@ const csrf = require('csurf');
 const connectDB = require('./config/database');
 const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
+const formRouter = require('./routes/formRouter');
+const submissionRouter = require('./routes/submissionRouter');
 const errorHandler = require('./middleware/errorHandler');
 const logger = require('./utils/logger');
 const NodeCache = require("node-cache");
@@ -80,6 +82,8 @@ app.use('/api/v1/auth', authLimiter);
 // Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/forms', formRouter);
+app.use('/api/v1/submissions', submissionRouter);
 
 // CSRF error handler
 app.use((err, req, res, next) => {

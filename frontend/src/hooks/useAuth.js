@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await api.get('/api/v1/user/me');
+      const response = await api.get('/user/me');
       setUser(response.data);
       setIsAuthenticated(true);
     } catch (error) {
@@ -28,35 +28,30 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      // console.log('Attempting login with credentials:', credentials);
-      const response = await api.post('/api/v1/auth/signin', credentials);
-      // console.log('Login response:', response.data);
+      const response = await api.post('/auth/signin', credentials);
       await checkAuthStatus();
       return response.data;
     } catch (error) {
-      // console.error('Login error:', error.response ? error.response.data : error.message);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      await api.post('/api/v1/auth/logout', {});
+      await api.post('/auth/logout', {});
       setIsAuthenticated(false);
       setUser(null);
     } catch (error) {
-      // console.error('Logout error:', error);
-      // Handle error (e.g., show error message to user)
+      console.error('Logout error:', error);
     }
   };
 
   const signup = async (userData) => {
     try {
-      const response = await api.post('/api/v1/auth/signup', userData);
+      const response = await api.post('/auth/signup', userData);
       await checkAuthStatus();
       return response.data;
     } catch (error) {
-      // console.error('Signup error:', error.response ? error.response.data : error.message);
       throw error;
     }
   };

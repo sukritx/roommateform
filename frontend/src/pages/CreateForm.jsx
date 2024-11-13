@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import api from '../utils/api';
+import { Upload, X } from 'lucide-react';
 
 const CreateForm = () => {
   const navigate = useNavigate();
@@ -40,6 +41,8 @@ const CreateForm = () => {
     }
   });
   const [newHobby, setNewHobby] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (section, field, value) => {
     setFormData(prev => ({
@@ -66,10 +69,42 @@ const CreateForm = () => {
     );
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/forms', formData);
+      const formDataToSend = new FormData();
+      
+      // Append the image if it exists
+      if (imageFile) {
+        formDataToSend.append('image', imageFile);
+      }
+
+      // Append other form data
+      formDataToSend.append('data', JSON.stringify(formData));
+
+      const response = await api.post('/forms', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       navigate(`/forms/${response.data._id}`);
     } catch (error) {
       console.error('Error creating form:', error);
@@ -145,6 +180,40 @@ const CreateForm = () => {
                   onChange={(e) => handleChange('roomDetails', 'description', e.target.value)}
                   placeholder="Describe your room..."
                 />
+              </div>
+              <div>
+                <label className="text-sm">Room Image</label>
+                <div className="mt-2">
+                  {!imagePreview ? (
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-500">Click to upload image</p>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <Button onClick={() => setStep(2)}>Next: About You</Button>
             </div>
