@@ -9,7 +9,7 @@ const Navbar = () => {
     return (
       <nav className="bg-background border-b">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link to="/" className="text-xl font-bold">MyApp</Link>
+          <Link to="/" className="text-xl font-bold">Roommateform</Link>
           <div>Loading...</div>
         </div>
       </nav>
@@ -19,20 +19,27 @@ const Navbar = () => {
   return (
     <nav className="bg-background border-b">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">MyApp</Link>
-        <div>
+        <div className="flex items-center space-x-6">
+          <Link to="/" className="text-xl font-bold">Roommateform</Link>
+          <Link to="/browse" className="text-sm hover:text-primary">Browse Rooms</Link>
+        </div>
+        
+        <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              <Button asChild className="mr-2">
+              <Button asChild variant="outline">
+                <Link to="/create-form">Create Listing</Link>
+              </Button>
+              <Button asChild>
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
-              <Button variant="outline" onClick={logout}>
+              <Button variant="ghost" onClick={logout}>
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" className="mr-2">
+              <Button asChild variant="ghost">
                 <Link to="/signin">Sign In</Link>
               </Button>
               <Button asChild>
