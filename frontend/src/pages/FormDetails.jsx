@@ -92,14 +92,14 @@ const FormDetails = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         {/* Room Details */}
-        <Card>
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>Room Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div>
               <h3 className="font-semibold">Location</h3>
               <p>{form.roomDetails.address}</p>
@@ -119,11 +119,11 @@ const FormDetails = () => {
         </Card>
 
         {/* Owner Details */}
-        <Card>
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>About the Owner</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div>
               <h3 className="font-semibold">Personality</h3>
               <p>{form.ownerDetails.personality}</p>
@@ -151,8 +151,11 @@ const FormDetails = () => {
       {/* Submit Interest Form */}
       <div className="mt-8">
         {!showSubmissionForm ? (
-          <Button onClick={() => setShowSubmissionForm(true)}>
-            I'm Interested
+          <Button 
+            onClick={() => setShowSubmissionForm(true)}
+            className="w-full sm:w-auto"
+          >
+            I&apos;m Interested
           </Button>
         ) : (
           <Card>
@@ -160,104 +163,119 @@ const FormDetails = () => {
               <CardTitle>Submit Your Interest</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-sm">Your Personality</label>
-                  <Input
-                    value={submission.personality}
-                    onChange={(e) => handleSubmissionChange('personality', e.target.value)}
-                    placeholder="Describe your personality"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm">Morning/Night Person</label>
-                  <Input
-                    value={submission.morningOrLateNight}
-                    onChange={(e) => handleSubmissionChange('morningOrLateNight', e.target.value)}
-                    placeholder="Are you a morning or night person?"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm">Cleanliness Level</label>
-                  <Input
-                    value={submission.cleanliness}
-                    onChange={(e) => handleSubmissionChange('cleanliness', e.target.value)}
-                    placeholder="Your cleanliness level"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm">Faculty</label>
-                  <Input
-                    value={submission.faculty}
-                    onChange={(e) => handleSubmissionChange('faculty', e.target.value)}
-                    placeholder="Your faculty"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm">Year</label>
-                  <Input
-                    type="number"
-                    value={submission.year}
-                    onChange={(e) => handleSubmissionChange('year', e.target.value)}
-                    placeholder="Your year"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm">Smoking</label>
-                  <Select
-                    value={submission.smoking}
-                    onValueChange={(value) => handleSubmissionChange('smoking', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select preference" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="outside">Outside Only</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm">Your Hobbies</label>
-                  <div className="flex gap-2 mb-2">
-                    <Input
-                      value={newHobby}
-                      onChange={(e) => setNewHobby(e.target.value)}
-                      placeholder="Add a hobby"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addHobby();
-                        }
-                      }}
-                    />
-                    <Button type="button" onClick={addHobby}>Add</Button>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Group related fields in two columns on larger screens */}
+                  <div className="space-y-4">
+                    {/* Personal Info */}
+                    <div>
+                      <label className="text-sm">Your Personality</label>
+                      <Input
+                        value={submission.personality}
+                        onChange={(e) => handleSubmissionChange('personality', e.target.value)}
+                        placeholder="Describe your personality"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm">Morning/Night Person</label>
+                      <Input
+                        value={submission.morningOrLateNight}
+                        onChange={(e) => handleSubmissionChange('morningOrLateNight', e.target.value)}
+                        placeholder="Are you a morning or night person?"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm">Cleanliness Level</label>
+                      <Input
+                        value={submission.cleanliness}
+                        onChange={(e) => handleSubmissionChange('cleanliness', e.target.value)}
+                        placeholder="Your cleanliness level"
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {submission.hobbies.map((hobby, index) => (
-                      <div 
-                        key={index} 
-                        className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2"
-                      >
-                        {hobby}
-                        <button
-                          type="button"
-                          onClick={() => removeHobby(index)}
-                          className="hover:text-destructive"
+                  <div className="space-y-4">
+                    {/* Academic Info */}
+                    <div>
+                      <label className="text-sm">Faculty</label>
+                      <Input
+                        value={submission.faculty}
+                        onChange={(e) => handleSubmissionChange('faculty', e.target.value)}
+                        placeholder="Your faculty"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm">Year</label>
+                      <Input
+                        type="number"
+                        value={submission.year}
+                        onChange={(e) => handleSubmissionChange('year', e.target.value)}
+                        placeholder="Your year"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Full width fields */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm">Smoking</label>
+                    <Select
+                      value={submission.smoking}
+                      onValueChange={(value) => handleSubmissionChange('smoking', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select preference" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="outside">Outside Only</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm">Your Hobbies</label>
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        value={newHobby}
+                        onChange={(e) => setNewHobby(e.target.value)}
+                        placeholder="Add a hobby"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addHobby();
+                          }
+                        }}
+                      />
+                      <Button type="button" onClick={addHobby}>Add</Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {submission.hobbies.map((hobby, index) => (
+                        <div 
+                          key={index} 
+                          className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2"
                         >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                          {hobby}
+                          <button
+                            type="button"
+                            onClick={() => removeHobby(index)}
+                            className="hover:text-destructive"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <Button type="submit">Submit</Button>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button type="submit" className="w-full sm:w-auto">Submit</Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setShowSubmissionForm(false)}
+                    className="w-full sm:w-auto"
                   >
                     Cancel
                   </Button>
