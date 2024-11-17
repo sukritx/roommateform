@@ -18,8 +18,15 @@ api.get('/auth/csrf-token')
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
+    // Only redirect to signin if:
+    // 1. It's a 401 error
+    // 2. We're not already on the signin page
+    // 3. We're not trying to fetch the CSRF token
+    if (
+      error.response?.status === 401 && 
+      !window.location.pathname.includes('/signin') &&
+      !error.config.url.includes('/csrf-token')
+    ) {
       window.location.href = '/signin';
     }
     return Promise.reject(error);
