@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const formSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     roomDetails: {
+      name: String,
       address: String,
       nearbyUniversity: String,
       totalBedrooms: Number,

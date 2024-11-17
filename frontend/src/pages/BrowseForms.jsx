@@ -139,9 +139,12 @@ const BrowseForms = () => {
                   </div>
                 )}
                 <CardHeader>
-                  <CardTitle className="text-lg line-clamp-1">
-                    Near {form.roomDetails.nearbyUniversity}
+                  <CardTitle className="text-lg">
+                    {form.roomDetails.name}
                   </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Near {form.roomDetails.nearbyUniversity}
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">

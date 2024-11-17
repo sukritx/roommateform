@@ -14,6 +14,7 @@ const CreateForm = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     roomDetails: {
+      name: '',
       address: '',
       nearbyUniversity: '',
       totalBedrooms: '',
@@ -21,9 +22,9 @@ const CreateForm = () => {
       description: '',
       monthlyRent: '',
       securityDeposit: '',
+      images: [],
       furniture: [],
       leaseTerms: '',
-      images: []
     },
     ownerDetails: {
       personality: '',
@@ -122,6 +123,15 @@ const CreateForm = () => {
           {step === 1 && (
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Room Details</h2>
+              <div>
+                <label className="text-sm">Dorm Name</label>
+                <Input
+                  value={formData.roomDetails.name}
+                  onChange={(e) => handleChange('roomDetails', 'name', e.target.value)}
+                  placeholder="e.g., Sunset Residence, Ocean View Dorm"
+                  required
+                />
+              </div>
               <div>
                 <label className="text-sm">Address</label>
                 <Input
