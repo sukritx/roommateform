@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import api from '../utils/api';
+import { motion } from 'framer-motion';
 
 const BrowseForms = () => {
   const [forms, setForms] = useState([]);
@@ -51,11 +52,27 @@ const BrowseForms = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6">Browse Available Rooms</h1>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-7xl mx-auto px-4"
+    >
+      <motion.h1 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-2xl md:text-3xl font-bold mb-6"
+      >
+        Browse Available Rooms
+      </motion.h1>
 
       {/* Filters */}
-      <form onSubmit={handleSearch} className="mb-8 space-y-4 md:space-y-0 md:flex md:gap-4 md:items-end">
+      <motion.form 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        onSubmit={handleSearch} 
+        className="mb-8 space-y-4 md:space-y-0 md:flex md:gap-4 md:items-end"
+      >
         <div className="flex-1">
           <label className="text-sm">University</label>
           <Input
@@ -89,47 +106,68 @@ const BrowseForms = () => {
           </div>
         </div>
         <Button type="submit" className="w-full md:w-auto">Search</Button>
-      </form>
+      </motion.form>
 
       {/* Results */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {forms.map(form => (
-          <Link key={form._id} to={`/forms/${form._id}`}>
-            <Card className="h-full hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-lg line-clamp-1">
-                  Near {form.roomDetails.nearbyUniversity}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="font-semibold text-lg">
-                    ${form.roomDetails.monthlyRent}/month
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {form.roomDetails.totalBedrooms} bed • {form.roomDetails.totalBathrooms} bath
-                  </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {form.roomDetails.address}
-                  </p>
-                  {form.boostStatus && (
-                    <div className="text-xs text-primary font-semibold">
-                      BOOSTED
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
+        {forms.map((form, index) => (
+          <motion.div
+            key={form._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 * index }}
+            whileHover={{ y: -5 }}
+          >
+            <Link to={`/forms/${form._id}`}>
+              <Card className="h-full hover:shadow-lg transition-all">
+                {form.roomDetails.images?.[0] && (
+                  <div className="relative h-48 overflow-hidden rounded-t-lg">
+                    <img
+                      src={form.roomDetails.images[0]}
+                      alt="Room"
+                      className="w-full h-full object-cover"
+                    />
+                    {form.boostStatus && (
+                      <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                        BOOSTED
+                      </div>
+                    )}
+                  </div>
+                )}
+                <CardHeader>
+                  <CardTitle className="text-lg line-clamp-1">
+                    Near {form.roomDetails.nearbyUniversity}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="font-semibold text-lg text-primary">
+                      ${form.roomDetails.monthlyRent}/month
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {form.roomDetails.totalBedrooms} bed • {form.roomDetails.totalBathrooms} bath
+                    </p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {form.roomDetails.address}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
         ))}
       </div>
 
       {forms.length === 0 && (
-        <div className="text-center text-muted-foreground mt-8">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-muted-foreground mt-8"
+        >
           No rooms found matching your criteria
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
