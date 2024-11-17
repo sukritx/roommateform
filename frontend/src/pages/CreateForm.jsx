@@ -188,24 +188,27 @@ const CreateForm = () => {
                 }`}
               >
                 <CardHeader>
-                  <CardTitle className="flex justify-between items-start gap-4">
-                    <div>
-                      <span>{plan.name}</span>
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex items-start justify-between">
+                      <span className="text-lg font-semibold">{plan.name}</span>
                       {plan.id === 'until-found' && (
-                        <div className="inline-block ml-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                        <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
                           Popular
-                        </div>
+                        </span>
                       )}
                     </div>
-                    <span className="text-2xl font-bold">{plan.price}</span>
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground">{plan.description}</p>
+                    <div className="flex items-baseline">
+                      <span className="text-3xl font-bold">{plan.price}</span>
+                      {plan.id !== 'free' && <span className="text-sm text-muted-foreground ml-1">/month</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{plan.description}</p>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary" />
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </li>
                     ))}
