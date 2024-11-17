@@ -1,30 +1,32 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import UniversitySearch from '@/components/UniversitySearch';
 import api from '../utils/api';
-import { motion } from 'framer-motion';
-import UniversitySearch from '../components/UniversitySearch';
 
 const BrowseForms = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUniversity, setSelectedUniversity] = useState(
+    searchParams.get('university') || ''
+  );
   const [filters, setFilters] = useState({
-    university: '',
     minPrice: '',
     maxPrice: ''
   });
-  const [selectedUniversity, setSelectedUniversity] = useState('');
 
   useEffect(() => {
     fetchForms();
-  }, []);
+  }, []); // Initial fetch
 
   const fetchForms = async () => {
     try {
       const queryParams = new URLSearchParams();
-      if (filters.university) queryParams.append('university', filters.university);
+      if (selectedUniversity) queryParams.append('university', selectedUniversity);
       if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
       if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
 
@@ -44,14 +46,21 @@ const BrowseForms = () => {
     }));
   };
 
+  const handleUniversityChange = (value) => {
+    setSelectedUniversity(value);
+    // Update URL params when university changes
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (value) {
+      newSearchParams.set('university', value);
+    } else {
+      newSearchParams.delete('university');
+    }
+    setSearchParams(newSearchParams);
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
-    const queryParams = new URLSearchParams();
-    if (selectedUniversity) queryParams.append('university', selectedUniversity);
-    if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
-    if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
-    
-    fetchForms(queryParams);
+    fetchForms();
   };
 
   if (loading) {
@@ -84,7 +93,7 @@ const BrowseForms = () => {
           <label className="text-sm mb-2 block">University</label>
           <UniversitySearch
             value={selectedUniversity}
-            onChange={setSelectedUniversity}
+            onChange={handleUniversityChange}
           />
         </div>
         <div className="grid grid-cols-2 gap-4 flex-1">

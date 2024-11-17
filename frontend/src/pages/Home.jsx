@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   HomeIcon, 
@@ -7,8 +7,13 @@ import {
   AcademicCapIcon, 
   ShieldCheckIcon 
 } from '@heroicons/react/24/outline';
+import UniversitySearch from '@/components/UniversitySearch';
+import { useState } from 'react';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [selectedUniversity, setSelectedUniversity] = useState('');
+
   const features = [
     {
       icon: HomeIcon,
@@ -31,6 +36,12 @@ const Home = () => {
       description: "Safe and verified user profiles for peace of mind"
     }
   ];
+
+  const handleSearch = () => {
+    if (selectedUniversity) {
+      navigate(`/browse?university=${encodeURIComponent(selectedUniversity)}`);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4">
@@ -57,14 +68,40 @@ const Home = () => {
           Connect with potential roommates near your university. Create a listing or browse available rooms.
         </motion.p>
         
-        <motion.div 
+        {/* University Search Section */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="max-w-xl mx-auto mb-8"
+        >
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <UniversitySearch
+                value={selectedUniversity}
+                onChange={setSelectedUniversity}
+                className="w-full"
+              />
+            </div>
+            <Button 
+              onClick={handleSearch}
+              size="lg"
+              className="whitespace-nowrap"
+              disabled={!selectedUniversity}
+            >
+              Find Rooms
+            </Button>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Button asChild size="lg" className="text-lg">
-            <Link to="/browse">Browse Rooms</Link>
+          <Button asChild size="lg" variant="outline" className="text-lg">
+            <Link to="/browse">Browse All Rooms</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="text-lg">
             <Link to="/create-form">Create Listing</Link>
