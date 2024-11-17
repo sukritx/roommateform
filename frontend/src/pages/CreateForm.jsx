@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import api from '../utils/api';
 import { Upload, X } from 'lucide-react';
+import UniversitySearch from '../components/UniversitySearch';
 
 const CreateForm = () => {
   const navigate = useNavigate();
@@ -131,10 +132,9 @@ const CreateForm = () => {
               </div>
               <div>
                 <label className="text-sm">Nearby University</label>
-                <Input
+                <UniversitySearch
                   value={formData.roomDetails.nearbyUniversity}
-                  onChange={(e) => handleChange('roomDetails', 'nearbyUniversity', e.target.value)}
-                  placeholder="e.g., University of Toronto"
+                  onChange={(value) => handleChange('roomDetails', 'nearbyUniversity', value)}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">

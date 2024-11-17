@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import api from '../utils/api';
 import { motion } from 'framer-motion';
+import UniversitySearch from '../components/UniversitySearch';
 
 const BrowseForms = () => {
   const [forms, setForms] = useState([]);
@@ -14,6 +15,7 @@ const BrowseForms = () => {
     minPrice: '',
     maxPrice: ''
   });
+  const [selectedUniversity, setSelectedUniversity] = useState('');
 
   useEffect(() => {
     fetchForms();
@@ -44,7 +46,12 @@ const BrowseForms = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchForms();
+    const queryParams = new URLSearchParams();
+    if (selectedUniversity) queryParams.append('university', selectedUniversity);
+    if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
+    if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
+    
+    fetchForms(queryParams);
   };
 
   if (loading) {
@@ -74,13 +81,10 @@ const BrowseForms = () => {
         className="mb-8 space-y-4 md:space-y-0 md:flex md:gap-4 md:items-end"
       >
         <div className="flex-1">
-          <label className="text-sm">University</label>
-          <Input
-            type="text"
-            name="university"
-            value={filters.university}
-            onChange={handleFilterChange}
-            placeholder="Near which university?"
+          <label className="text-sm mb-2 block">University</label>
+          <UniversitySearch
+            value={selectedUniversity}
+            onChange={setSelectedUniversity}
           />
         </div>
         <div className="grid grid-cols-2 gap-4 flex-1">
