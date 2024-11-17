@@ -9,7 +9,7 @@ const createPaymentIntent = async (req, res) => {
     let amount;
     if (packageType === 'monthly') {
       amount = 899; // $8.99
-    } else if (packageType === 'untilFound') {
+    } else if (packageType === 'until-found') {
       amount = 1299; // $12.99
     } else {
       return res.status(400).json({ message: 'Invalid package type' });
@@ -18,7 +18,10 @@ const createPaymentIntent = async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: 'usd',
-      metadata: { integration_check: 'accept_a_payment' }
+      metadata: { 
+        userId: req.user.id,
+        packageType
+      }
     });
 
     res.json({
@@ -44,13 +47,14 @@ const handlePaymentSuccess = async (req, res) => {
 
     await payment.save();
 
-    // Update form expiration based on package type
+    // Set form expiration based on package type
     const expirationDate = packageType === 'monthly'
       ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)  // 30 days
-      : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
+      : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year (for until-found)
 
     await Form.findByIdAndUpdate(formId, {
       isActive: true,
+      publishDate: new Date(),
       expirationDate
     });
 
@@ -63,7 +67,7 @@ const handlePaymentSuccess = async (req, res) => {
 const getPaymentHistory = async (req, res) => {
   try {
     const payments = await Payment.find({ user: req.user.id })
-      .populate('form', 'roomDetails.address')
+      .populate('form', 'roomDetails.name roomDetails.address')
       .sort({ createdAt: -1 });
 
     res.json(payments);

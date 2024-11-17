@@ -15,6 +15,7 @@ const submissionRouter = require('./routes/submissionRouter');
 const errorHandler = require('./middleware/errorHandler');
 const logger = require('./utils/logger');
 const NodeCache = require("node-cache");
+const paymentRouter = require('./routes/paymentRouter');
 
 dotenv.config();
 
@@ -83,6 +84,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/forms', formRouter);
 app.use('/api/v1/submissions', submissionRouter);
+app.use('/api/v1/payments', paymentRouter);
 
 // CSRF error handler
 app.use((err, req, res, next) => {
