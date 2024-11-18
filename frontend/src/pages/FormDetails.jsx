@@ -25,7 +25,9 @@ const FormDetails = () => {
     hobbies: [],
     faculty: '',
     year: '',
-    contactInfo: []
+    contactInfo: [
+      { platform: '', username: '' }
+    ]
   });
 
   useEffect(() => {
@@ -47,6 +49,34 @@ const FormDetails = () => {
     setSubmission(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const handleContactInfoChange = (index, field, value) => {
+    setSubmission(prev => {
+      const newContactInfo = [...prev.contactInfo];
+      newContactInfo[index] = {
+        ...newContactInfo[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        contactInfo: newContactInfo
+      };
+    });
+  };
+
+  const addContactInfo = () => {
+    setSubmission(prev => ({
+      ...prev,
+      contactInfo: [...prev.contactInfo, { platform: '', username: '' }]
+    }));
+  };
+
+  const removeContactInfo = (index) => {
+    setSubmission(prev => ({
+      ...prev,
+      contactInfo: prev.contactInfo.filter((_, i) => i !== index)
     }));
   };
 
@@ -367,6 +397,61 @@ const FormDetails = () => {
                     min="1"
                     max="6"
                   />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm">Contact Information *</label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addContactInfo}
+                    >
+                      Add Contact
+                    </Button>
+                  </div>
+                  {submission.contactInfo.map((contact, index) => (
+                    <div key={index} className="flex gap-4">
+                      <div className="flex-1">
+                        <Select
+                          value={contact.platform}
+                          onValueChange={(value) => handleContactInfoChange(index, 'platform', value)}
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select platform" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                            <SelectItem value="instagram">Instagram</SelectItem>
+                            <SelectItem value="facebook">Facebook</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="phone">Phone</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex-1">
+                        <Input
+                          value={contact.username}
+                          onChange={(e) => handleContactInfoChange(index, 'username', e.target.value)}
+                          placeholder={`Enter your ${contact.platform || 'contact'} info`}
+                          required
+                        />
+                      </div>
+                      {index > 0 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeContactInfo(index)}
+                          className="shrink-0"
+                        >
+                          ×
+                        </Button>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 <div className="flex gap-4">
