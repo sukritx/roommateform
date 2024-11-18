@@ -29,6 +29,7 @@ const FormDetails = () => {
       { platform: '', username: '' }
     ]
   });
+  const [newHobby, setNewHobby] = useState('');
 
   useEffect(() => {
     fetchForm();
@@ -77,6 +78,23 @@ const FormDetails = () => {
     setSubmission(prev => ({
       ...prev,
       contactInfo: prev.contactInfo.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addHobby = () => {
+    if (newHobby.trim()) {
+      setSubmission(prev => ({
+        ...prev,
+        hobbies: [...prev.hobbies, newHobby.trim()]
+      }));
+      setNewHobby('');
+    }
+  };
+
+  const removeHobby = (indexToRemove) => {
+    setSubmission(prev => ({
+      ...prev,
+      hobbies: prev.hobbies.filter((_, index) => index !== indexToRemove)
     }));
   };
 
@@ -397,6 +415,47 @@ const FormDetails = () => {
                     min="1"
                     max="6"
                   />
+                </div>
+
+                <div>
+                  <label className="text-sm">Your Hobbies</label>
+                  <div className="flex gap-2 mb-2">
+                    <Input
+                      value={newHobby}
+                      onChange={(e) => setNewHobby(e.target.value)}
+                      placeholder="Add a hobby"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addHobby();
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button" 
+                      onClick={addHobby}
+                      variant="outline"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {submission.hobbies.map((hobby, index) => (
+                      <div 
+                        key={index} 
+                        className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2"
+                      >
+                        {hobby}
+                        <button
+                          type="button"
+                          onClick={() => removeHobby(index)}
+                          className="hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-4">
