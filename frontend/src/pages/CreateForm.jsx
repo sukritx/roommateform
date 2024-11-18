@@ -460,7 +460,7 @@ const CreateForm = () => {
                   <Input
                     value={formData.ownerDetails.partying}
                     onChange={(e) => handleChange('ownerDetails', 'partying', e.target.value)}
-                    placeholder="e.g., Social, Quiet, etc."
+                    placeholder="e.g., Yes, Sometimes, No, If my friends invite, etc."
                     className={errors.partying ? 'border-red-500' : ''}
                   />
                   {errors.partying && <p className="text-sm text-red-500 mt-1">{errors.partying}</p>}
@@ -471,7 +471,7 @@ const CreateForm = () => {
                   <Input
                     value={formData.ownerDetails.smoking}
                     onChange={(e) => handleChange('ownerDetails', 'smoking', e.target.value)}
-                    placeholder="e.g., No, Social, etc."
+                    placeholder="e.g., No, Only Outside, etc."
                     className={errors.smoking ? 'border-red-500' : ''}
                   />
                   {errors.smoking && <p className="text-sm text-red-500 mt-1">{errors.smoking}</p>}
