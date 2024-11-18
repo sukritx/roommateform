@@ -17,6 +17,7 @@ const FormDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFavorited, setIsFavorited] = useState(false);
   const [submission, setSubmission] = useState({
     personality: '',
     morningOrLateNight: '',
@@ -33,7 +34,6 @@ const FormDetails = () => {
     notes: ''
   });
   const [newHobby, setNewHobby] = useState('');
-  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     fetchForm();
@@ -55,8 +55,8 @@ const FormDetails = () => {
 
   const checkFavoriteStatus = async () => {
     try {
-      const response = await api.get('/user/me');
-      setIsFavorited(response.data.favorites.includes(id));
+      const response = await api.get('/user/favorites');
+      setIsFavorited(response.data.some(favorite => favorite._id === id));
     } catch (error) {
       console.error('Error checking favorite status:', error);
     }
@@ -184,7 +184,7 @@ const FormDetails = () => {
           variant="ghost"
           size="icon"
           onClick={handleToggleFavorite}
-          className={`${isFavorited ? 'text-red-500' : 'text-gray-500'}`}
+          className={`${isFavorited ? 'text-red-500' : 'text-gray-500'} hover:text-red-500`}
         >
           <Heart className={`h-6 w-6 ${isFavorited ? 'fill-current' : ''}`} />
         </Button>
@@ -282,11 +282,11 @@ const FormDetails = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">Personality</h4>
+                <h3 className="font-semibold">Personality</h3>
                 <p>{form.ownerDetails.personality}</p>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Preferences</h4>
+                <h3 className="font-semibold">Preferences</h3>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <span className="text-muted-foreground">Schedule:</span>
@@ -308,7 +308,7 @@ const FormDetails = () => {
               </div>
               {form.ownerDetails.hobbies?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2">Hobbies</h4>
+                  <h3 className="font-semibold">Hobbies</h3>
                   <div className="flex flex-wrap gap-2">
                     {form.ownerDetails.hobbies.map((hobby, index) => (
                       <span
@@ -321,25 +321,20 @@ const FormDetails = () => {
                   </div>
                 </div>
               )}
-              {form.ownerDetails.faculty && (
-                <div>
-                  <h4 className="font-semibold mb-2">Academic</h4>
-                  <p>Faculty: {form.ownerDetails.faculty}</p>
-                  {form.ownerDetails.year && <p>Year: {form.ownerDetails.year}</p>}
-                </div>
-              )}
               <div>
-                <h4 className="font-semibold mb-2">Gender Preferences</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Owner:</span>
-                    <span>{form.ownerDetails.gender}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Looking for:</span>
-                    <span>{form.ownerDetails.preferredGender}</span>
-                  </li>
-                </ul>
+                <h3 className="font-semibold">Academic</h3>
+                {form.ownerDetails.faculty && (
+                  <p className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Faculty:</span>
+                    <span>{form.ownerDetails.faculty}</span>
+                  </p>
+                )}
+                {form.ownerDetails.year && (
+                  <p className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Year:</span>
+                    <span>{form.ownerDetails.year}</span>
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

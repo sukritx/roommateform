@@ -25,7 +25,9 @@ const formSchema = new mongoose.Schema({
       smoking: String,
       hobbies: [String],
       gender: String,
-      preferredGender: String
+      preferredGender: String,
+      faculty: String,
+      year: { type: Number }
     },
     filters: {
       personality: String,

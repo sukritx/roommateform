@@ -94,9 +94,28 @@ const updateForm = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    // Only allow updating certain fields
+    const allowedUpdates = {
+      'roomDetails.description': req.body.roomDetails?.description,
+      'isActive': req.body.isActive,
+      'ownerDetails.personality': req.body.ownerDetails?.personality,
+      'ownerDetails.morningOrLateNight': req.body.ownerDetails?.morningOrLateNight,
+      'ownerDetails.cleanliness': req.body.ownerDetails?.cleanliness,
+      'ownerDetails.partying': req.body.ownerDetails?.partying,
+      'ownerDetails.smoking': req.body.ownerDetails?.smoking,
+      'ownerDetails.hobbies': req.body.ownerDetails?.hobbies,
+      'ownerDetails.faculty': req.body.ownerDetails?.faculty,
+      'ownerDetails.year': req.body.ownerDetails?.year
+    };
+
+    // Remove undefined values
+    Object.keys(allowedUpdates).forEach(key => 
+      allowedUpdates[key] === undefined && delete allowedUpdates[key]
+    );
+
     const updatedForm = await Form.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: allowedUpdates },
       { new: true }
     );
 
