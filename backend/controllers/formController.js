@@ -151,11 +151,22 @@ const boostListing = async (req, res) => {
   }
 };
 
+const getMyListings = async (req, res) => {
+  try {
+    const forms = await Form.find({ owner: req.user.id })
+      .sort({ createdAt: -1 });
+    res.json(forms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createForm,
   getForms,
   getFormById,
   updateForm,
   toggleFavorite,
-  boostListing
+  boostListing,
+  getMyListings
 }; 
