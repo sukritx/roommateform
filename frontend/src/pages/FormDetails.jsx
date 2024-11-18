@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { MapPin, Home, Bath, Calendar } from 'lucide-react';
+import { Textarea } from "@/components/ui/textarea";
 
 const FormDetails = () => {
   const { id } = useParams();
@@ -27,7 +28,8 @@ const FormDetails = () => {
     year: '',
     contactInfo: [
       { platform: '', username: '' }
-    ]
+    ],
+    notes: ''
   });
   const [newHobby, setNewHobby] = useState('');
 
@@ -511,6 +513,16 @@ const FormDetails = () => {
                       )}
                     </div>
                   ))}
+                </div>
+
+                <div>
+                  <label className="text-sm">Note to Room Owner</label>
+                  <Textarea
+                    value={submission.notes}
+                    onChange={(e) => handleSubmissionChange('notes', e.target.value)}
+                    placeholder="Something you want to tell the room owner?"
+                    className="h-24"
+                  />
                 </div>
 
                 <div className="flex gap-4">
