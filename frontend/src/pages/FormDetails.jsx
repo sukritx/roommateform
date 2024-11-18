@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { MapPin, Home, Bath, Calendar } from 'lucide-react';
+import { MapPin, Home, Bath, Calendar, Heart } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 
 const FormDetails = () => {
@@ -33,10 +33,14 @@ const FormDetails = () => {
     notes: ''
   });
   const [newHobby, setNewHobby] = useState('');
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     fetchForm();
-  }, [id]);
+    if (isAuthenticated) {
+      checkFavoriteStatus();
+    }
+  }, [id, isAuthenticated]);
 
   const fetchForm = async () => {
     try {
@@ -46,6 +50,29 @@ const FormDetails = () => {
       console.error('Error fetching form:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const response = await api.get('/user/me');
+      setIsFavorited(response.data.favorites.includes(id));
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      return;
+    }
+
+    try {
+      await api.post(`/forms/${id}/favorite`);
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
     }
   };
 
@@ -149,6 +176,18 @@ const FormDetails = () => {
             )}
           </div>
         )}
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{form.roomDetails.name}</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleToggleFavorite}
+          className={`${isFavorited ? 'text-red-500' : 'text-gray-500'}`}
+        >
+          <Heart className={`h-6 w-6 ${isFavorited ? 'fill-current' : ''}`} />
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
