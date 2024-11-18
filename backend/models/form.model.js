@@ -23,7 +23,9 @@ const formSchema = new mongoose.Schema({
       cleanliness: String,
       partying: String,
       smoking: String,
-      hobbies: [String]
+      hobbies: [String],
+      gender: String,
+      preferredGender: String
     },
     filters: {
       personality: String,

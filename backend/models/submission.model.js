@@ -8,6 +8,7 @@ const submissionSchema = new mongoose.Schema({
     cleanliness: String,
     partying: String,
     smoking: String,
+    gender: String,
     hobbies: [String],
     contactInfo: [
       {

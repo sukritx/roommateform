@@ -26,6 +26,7 @@ const FormDetails = () => {
     hobbies: [],
     faculty: '',
     year: '',
+    gender: '',
     contactInfo: [
       { platform: '', username: '' }
     ],
@@ -288,6 +289,19 @@ const FormDetails = () => {
                   {form.ownerDetails.year && <p>Year: {form.ownerDetails.year}</p>}
                 </div>
               )}
+              <div>
+                <h4 className="font-semibold mb-2">Gender Preferences</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Owner:</span>
+                    <span>{form.ownerDetails.gender}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Looking for:</span>
+                    <span>{form.ownerDetails.preferredGender}</span>
+                  </li>
+                </ul>
+              </div>
             </CardContent>
           </Card>
 
@@ -396,6 +410,16 @@ const FormDetails = () => {
                       <SelectItem value="outside">Outside Only</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm">Your Gender *</label>
+                  <Input
+                    value={submission.gender}
+                    onChange={(e) => handleSubmissionChange('gender', e.target.value)}
+                    placeholder="Enter your gender"
+                    required
+                  />
                 </div>
 
                 <div>

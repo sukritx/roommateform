@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Upload, X, Check } from 'lucide-react';
 import UniversitySearch from '@/components/UniversitySearch';
 import api from '../utils/api';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const CreateForm = () => {
   const navigate = useNavigate();
@@ -37,7 +38,9 @@ const CreateForm = () => {
       smoking: '',
       hobbies: [],
       faculty: '',
-      year: ''
+      year: '',
+      gender: '',
+      preferredGender: ''
     }
   });
 
@@ -422,6 +425,26 @@ const CreateForm = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm">Your Gender *</label>
+                  <Input
+                    value={formData.ownerDetails.gender}
+                    onChange={(e) => handleChange('ownerDetails', 'gender', e.target.value)}
+                    placeholder="Enter your gender"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm">Preferred Roommate Gender *</label>
+                  <Input
+                    value={formData.ownerDetails.preferredGender}
+                    onChange={(e) => handleChange('ownerDetails', 'preferredGender', e.target.value)}
+                    placeholder="Enter preferred roommate gender"
+                    required
+                  />
+                </div>
+
                 <div>
                   <label className="text-sm">Personality *</label>
                   <Input
