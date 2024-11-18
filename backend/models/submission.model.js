@@ -16,7 +16,8 @@ const submissionSchema = new mongoose.Schema({
       }
     ],
     faculty: { type: String },
-    year: { type: Number }
+    year: { type: Number },
+    notes: String,
   },
   isRead: { type: Boolean, default: false }
 }, { timestamps: true });
