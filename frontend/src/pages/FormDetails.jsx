@@ -66,7 +66,7 @@ const FormDetails = () => {
 
   const fetchSubmissions = async () => {
     try {
-      const response = await api.get(`/forms/${id}/submissions`);
+      const response = await api.get(`/submissions/form/${id}`);
       setSubmissions(response.data);
     } catch (error) {
       console.error('Error fetching submissions:', error);
