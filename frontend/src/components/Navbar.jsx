@@ -46,6 +46,9 @@ const Navbar = () => {
                   <Button asChild>
                     <Link to="/dashboard">Dashboard</Link>
                   </Button>
+                  <Button asChild variant="outline">
+                    <Link to="/submissions">Submissions</Link>
+                  </Button>
                   <Button variant="ghost" onClick={logout}>
                     Logout
                   </Button>
@@ -84,6 +87,11 @@ const Navbar = () => {
                 <Button asChild className="w-full">
                   <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                     Dashboard
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/submissions" onClick={() => setIsMenuOpen(false)}>
+                    Submissions
                   </Link>
                 </Button>
                 <Button 

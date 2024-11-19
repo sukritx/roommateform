@@ -7,6 +7,7 @@ import CreateForm from './pages/CreateForm';
 import FormDetails from './pages/FormDetails';
 import BrowseForms from './pages/BrowseForms';
 import AuthCallback from './pages/AuthCallback';
+import SubmissionsDashboard from './pages/SubmissionsDashboard';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -29,6 +30,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-form" element={<CreateForm />} />
+              <Route path="/submissions" element={<SubmissionsDashboard />} />
             </Route>
           </Routes>
         </div>

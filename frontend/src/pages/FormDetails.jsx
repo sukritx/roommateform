@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 const FormDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);
@@ -33,12 +33,14 @@ const FormDetails = () => {
     ],
     notes: ''
   });
-  const [newHobby, setNewHobby] = useState('');
+  const [newHobby, setNewHobby] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
     fetchForm();
     if (isAuthenticated) {
       checkFavoriteStatus();
+      fetchSubmissions();
     }
   }, [id, isAuthenticated]);
 
@@ -59,6 +61,15 @@ const FormDetails = () => {
       setIsFavorited(response.data.some(favorite => favorite._id === id));
     } catch (error) {
       console.error('Error checking favorite status:', error);
+    }
+  };
+
+  const fetchSubmissions = async () => {
+    try {
+      const response = await api.get(`/forms/${id}/submissions`);
+      setSubmissions(response.data);
+    } catch (error) {
+      console.error('Error fetching submissions:', error);
     }
   };
 
@@ -139,6 +150,17 @@ const FormDetails = () => {
       // Show success message or redirect
     } catch (error) {
       console.error('Error submitting form:', error);
+    }
+  };
+
+  const markAsRead = async (submissionId) => {
+    try {
+      await api.put(`/submissions/${submissionId}/read`);
+      setSubmissions(submissions.map(sub => 
+        sub._id === submissionId ? { ...sub, isRead: true } : sub
+      ));
+    } catch (error) {
+      console.error('Error marking submission as read:', error);
     }
   };
 
@@ -355,6 +377,72 @@ const FormDetails = () => {
           </Button>
         </div>
       </div>
+
+      {form?.owner === user?.id && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Submissions</h2>
+          {submissions.map((submission) => (
+            <Card key={submission._id} className="mb-4">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg">
+                    Submission from {submission.submitter.faculty} Student
+                    {!submission.isRead && (
+                      <span className="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
+                        New
+                      </span>
+                    )}
+                  </CardTitle>
+                  {!submission.isRead && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => markAsRead(submission._id)}
+                    >
+                      Mark as Read
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p><strong>Personality:</strong> {submission.submitter.personality}</p>
+                    <p><strong>Cleanliness:</strong> {submission.submitter.cleanliness}</p>
+                    <p><strong>Schedule:</strong> {submission.submitter.morningOrLateNight}</p>
+                    <p><strong>Gender:</strong> {submission.submitter.gender}</p>
+                  </div>
+                  <div>
+                    <p><strong>Faculty:</strong> {submission.submitter.faculty}</p>
+                    <p><strong>Year:</strong> {submission.submitter.year}</p>
+                    <p><strong>Hobbies:</strong> {submission.submitter.hobbies.join(', ')}</p>
+                  </div>
+                </div>
+                {submission.submitter.notes && (
+                  <div className="mt-4">
+                    <strong>Additional Notes:</strong>
+                    <p>{submission.submitter.notes}</p>
+                  </div>
+                )}
+                <div className="mt-4">
+                  <strong>Contact Information:</strong>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {submission.submitter.contactInfo.map((contact, index) => (
+                      <div key={index} className="flex items-center">
+                        <span className="capitalize">{contact.platform}:</span>
+                        <span className="ml-2">{contact.username}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {submissions.length === 0 && (
+            <p className="text-gray-500">No submissions yet.</p>
+          )}
+        </div>
+      )}
 
       {/* Submission Form Modal */}
       {showSubmissionForm && (

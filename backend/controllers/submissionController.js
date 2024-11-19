@@ -29,8 +29,20 @@ const createSubmission = async (req, res) => {
 
 const getSubmissions = async (req, res) => {
   try {
+    // First check if the user owns the form
+    const form = await Form.findById(req.params.formId);
+    if (!form) {
+      return res.status(404).json({ message: 'Form not found' });
+    }
+
+    if (form.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to view these submissions' });
+    }
+
     const submissions = await Submission.find({ form: req.params.formId })
+      .populate('form', 'roomDetails.name') // Populate form name
       .sort({ createdAt: -1 });
+
     res.json(submissions);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,17 +72,23 @@ const updateSubmissionStatus = async (req, res) => {
 
 const markAsRead = async (req, res) => {
   try {
-    const submission = await Submission.findByIdAndUpdate(
-      req.params.submissionId,
-      { isRead: true },
-      { new: true }
-    );
-
+    // First check if the user owns the form
+    const submission = await Submission.findById(req.params.submissionId).populate('form');
     if (!submission) {
       return res.status(404).json({ message: 'Submission not found' });
     }
 
-    res.json(submission);
+    if (submission.form.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to mark this submission as read' });
+    }
+
+    const updatedSubmission = await Submission.findByIdAndUpdate(
+      req.params.submissionId,
+      { isRead: true },
+      { new: true }
+    ).populate('form', 'roomDetails.name');
+
+    res.json(updatedSubmission);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -81,4 +99,4 @@ module.exports = {
   getSubmissions,
   updateSubmissionStatus,
   markAsRead
-}; 
+};
