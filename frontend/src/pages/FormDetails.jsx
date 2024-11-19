@@ -206,11 +206,11 @@ const FormDetails = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold text-primary">
-                    ${form.roomDetails.monthlyRent}
+                    {form.roomDetails.currency} {form.roomDetails.monthlyRent}
                     <span className="text-sm text-muted-foreground">/month</span>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    ${form.roomDetails.securityDeposit} deposit
+                    {form.roomDetails.currency} {form.roomDetails.securityDeposit} deposit
                   </p>
                 </div>
               </div>
@@ -603,4 +603,4 @@ const FormDetails = () => {
   );
 };
 
-export default FormDetails; 
+export default FormDetails;

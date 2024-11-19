@@ -40,7 +40,7 @@ const RoomCard = ({ form, onEdit }) => (
 				</CardHeader>
 				<CardContent>
 					<p className="text-lg font-semibold text-primary">
-						${form.roomDetails.monthlyRent}/month
+						{form.roomDetails.currency} {form.roomDetails.monthlyRent}/month
 					</p>
 					<p className="text-sm text-muted-foreground">
 						Near {form.roomDetails.nearbyUniversity}
@@ -70,7 +70,8 @@ RoomCard.propTypes = {
 			images: PropTypes.arrayOf(PropTypes.string),
 			name: PropTypes.string.isRequired,
 			monthlyRent: PropTypes.number.isRequired,
-			nearbyUniversity: PropTypes.string.isRequired
+			nearbyUniversity: PropTypes.string.isRequired,
+			currency: PropTypes.string.isRequired
 		}).isRequired,
 		isActive: PropTypes.bool,
 		boostStatus: PropTypes.bool

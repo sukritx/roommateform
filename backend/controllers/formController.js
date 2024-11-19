@@ -97,6 +97,7 @@ const updateForm = async (req, res) => {
     // Only allow updating certain fields
     const allowedUpdates = {
       'roomDetails.description': req.body.roomDetails?.description,
+      'roomDetails.currency': req.body.roomDetails?.currency,
       'isActive': req.body.isActive,
       'ownerDetails.personality': req.body.ownerDetails?.personality,
       'ownerDetails.morningOrLateNight': req.body.ownerDetails?.morningOrLateNight,

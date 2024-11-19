@@ -10,6 +10,7 @@ const formSchema = new mongoose.Schema({
       totalBathrooms: Number,
       description: String,
       monthlyRent: Number,
+      currency: { type: String, default: 'USD' },
       securityDeposit: Number,
       images: [String],
       furniture: [String],

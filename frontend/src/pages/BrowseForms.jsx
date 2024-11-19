@@ -158,7 +158,7 @@ const BrowseForms = () => {
                 <CardContent>
                   <div className="space-y-2">
                     <p className="font-semibold text-lg text-primary">
-                      ${form.roomDetails.monthlyRent}/month
+                      {form.roomDetails.currency} {form.roomDetails.monthlyRent}/month
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {form.roomDetails.totalBedrooms} bed • {form.roomDetails.totalBathrooms} bath

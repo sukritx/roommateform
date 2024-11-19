@@ -25,6 +25,7 @@ const CreateForm = () => {
       totalBathrooms: '',
       description: '',
       monthlyRent: '',
+      currency: 'USD',
       securityDeposit: '',
       images: [],
       furniture: [],
@@ -315,9 +316,28 @@ const CreateForm = () => {
                   )}
                 </div>
 
+                <div>
+                  <label className="text-sm">Currency for Rent & Deposit</label>
+                  <Select
+                    value={formData.roomDetails.currency}
+                    onValueChange={(value) => handleChange('roomDetails', 'currency', value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="USD" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm">Monthly Rent (USD) *</label>
+                    <label className="text-sm">Monthly Rent *</label>
                     <Input
                       type="number"
                       value={formData.roomDetails.monthlyRent}
@@ -330,7 +350,7 @@ const CreateForm = () => {
                     )}
                   </div>
                   <div>
-                    <label className="text-sm">Security Deposit (USD) *</label>
+                    <label className="text-sm">Security Deposit *</label>
                     <Input
                       type="number"
                       value={formData.roomDetails.securityDeposit}
@@ -544,4 +564,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm; 
+export default CreateForm;
