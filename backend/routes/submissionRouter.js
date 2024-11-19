@@ -4,7 +4,8 @@ const {
   createSubmission, 
   getSubmissions, 
   updateSubmissionStatus, 
-  markAsRead 
+  markAsRead,
+  getUserSubmissions
 } = require('../controllers/submissionController');
 
 const router = express.Router();
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(authenticateToken);
 
 router.post('/', createSubmission);
+router.get('/my-submissions', getUserSubmissions);
 router.get('/form/:formId', getSubmissions);
 router.put('/:submissionId/status', updateSubmissionStatus);
 router.put('/:submissionId/read', markAsRead);

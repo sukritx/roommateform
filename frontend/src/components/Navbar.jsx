@@ -49,6 +49,9 @@ const Navbar = () => {
                   <Button asChild variant="outline">
                     <Link to="/submissions">Submissions</Link>
                   </Button>
+                  <Button asChild variant="outline">
+                    <Link to="/my-submissions">My Applications</Link>
+                  </Button>
                   <Button variant="ghost" onClick={logout}>
                     Logout
                   </Button>
@@ -92,6 +95,11 @@ const Navbar = () => {
                 <Button asChild variant="outline" className="w-full">
                   <Link to="/submissions" onClick={() => setIsMenuOpen(false)}>
                     Submissions
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/my-submissions" onClick={() => setIsMenuOpen(false)}>
+                    My Applications
                   </Link>
                 </Button>
                 <Button 

@@ -141,13 +141,20 @@ const FormDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      navigate('/signin');
+      return;
+    }
     try {
       await api.post('/submissions', {
         formId: id,
-        submitter: submission
+        submitter: {
+          ...submission,
+          userId: user.id
+        }
       });
       setShowSubmissionForm(false);
-      // Show success message or redirect
+      navigate('/my-submissions');
     } catch (error) {
       console.error('Error submitting form:', error);
     }

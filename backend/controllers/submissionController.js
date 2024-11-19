@@ -8,9 +8,15 @@ const createSubmission = async (req, res) => {
       return res.status(404).json({ message: 'Form not found' });
     }
 
+    // Add the user ID to the submitter object
+    const submitterData = {
+      ...req.body.submitter,
+      userId: req.user.id
+    };
+
     const submission = new Submission({
       form: req.body.formId,
-      submitter: req.body.submitter
+      submitter: submitterData
     });
 
     const savedSubmission = await submission.save();
@@ -40,7 +46,19 @@ const getSubmissions = async (req, res) => {
     }
 
     const submissions = await Submission.find({ form: req.params.formId })
-      .populate('form', 'roomDetails.name') // Populate form name
+      .populate('form', 'roomDetails.name')
+      .sort({ createdAt: -1 });
+
+    res.json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserSubmissions = async (req, res) => {
+  try {
+    const submissions = await Submission.find({ 'submitter.userId': req.user.id })
+      .populate('form', 'roomDetails.name location price')
       .sort({ createdAt: -1 });
 
     res.json(submissions);
@@ -98,5 +116,6 @@ module.exports = {
   createSubmission,
   getSubmissions,
   updateSubmissionStatus,
-  markAsRead
+  markAsRead,
+  getUserSubmissions
 };

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const submissionSchema = new mongoose.Schema({
   form: { type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
   submitter: {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     personality: String,
     morningOrLateNight: String,
     cleanliness: String,
