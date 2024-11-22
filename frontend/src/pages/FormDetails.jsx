@@ -8,6 +8,7 @@ import api from '../utils/api';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { MapPin, Home, Bath, Calendar, Heart } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
+import { Loading } from "@/components/ui/loading";
 
 const FormDetails = () => {
   const { id } = useParams();
@@ -172,7 +173,11 @@ const FormDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loading />
+      </div>
+    );
   }
 
   if (!form) {

@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/loading";
 
 const MySubmissions = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const MySubmissions = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loading />
       </div>
     );
   }

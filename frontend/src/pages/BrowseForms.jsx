@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UniversitySearch from '@/components/UniversitySearch';
 import api from '../utils/api';
+import { Loading } from "@/components/ui/loading";
 
 const BrowseForms = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,7 +65,11 @@ const BrowseForms = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loading />
+      </div>
+    );
   }
 
   return (
