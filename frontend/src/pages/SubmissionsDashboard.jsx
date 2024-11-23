@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
+import { Loading } from "@/components/ui/loading";
 
 const SubmissionsDashboard = () => {
   const navigate = useNavigate();
@@ -89,10 +90,8 @@ const SubmissionsDashboard = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4">
-        <div className="flex items-center justify-center min-h-[200px]">
-          Loading your submissions...
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loading />
       </div>
     );
   }
