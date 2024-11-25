@@ -10,6 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 import api from '../utils/api';
 import PropTypes from 'prop-types';
 import { Pencil } from 'lucide-react';
+import { Loading } from "@/components/ui/loading";
 
 const RoomCard = ({ form, onEdit }) => (
 	<div className="relative">
@@ -120,7 +121,9 @@ const Dashboard = () => {
 	};
 
 	if (loading) {
-		return <div>Loading...</div>;
+		<div className="flex justify-center items-center min-h-screen">
+			<Loading />
+		</div>
 	}
 
 	return (
