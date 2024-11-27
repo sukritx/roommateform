@@ -9,6 +9,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { MapPin, Home, Bath, Calendar, Heart } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
 import { Loading } from "@/components/ui/loading";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const FormDetails = () => {
   const { id } = useParams();
@@ -36,6 +37,7 @@ const FormDetails = () => {
   });
   const [newHobby, setNewHobby] = useState([]);
   const [submissions, setSubmissions] = useState([]);
+  const [showLoginMessage, setShowLoginMessage] = useState(false);
 
   useEffect(() => {
     fetchForm();
@@ -180,6 +182,27 @@ const FormDetails = () => {
     } catch (error) {
       console.error('Error marking submission as read:', error);
     }
+  };
+
+  const handleInterestClick = () => {
+    if (!isAuthenticated) {
+      setShowLoginMessage(true);
+    } else {
+      setShowSubmissionForm(true);
+    }
+  };
+
+  const handleCloseLoginMessage = () => {
+    setShowLoginMessage(false);
+  };
+
+  const handleProceedAsGuest = () => {
+    setShowLoginMessage(false);
+    setShowSubmissionForm(true);
+  };
+
+  const handleLogin = () => {
+    navigate('/signin', { state: { from: `/forms/${id}` } });
   };
 
   if (loading) {
@@ -389,13 +412,15 @@ const FormDetails = () => {
           </Card>
 
           {/* Contact Button */}
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={() => setShowSubmissionForm(true)}
-          >
-            I'm Interested
-          </Button>
+          <div className="mt-8 flex justify-center">
+            <Button 
+              size="lg" 
+              onClick={handleInterestClick}
+              className="w-full md:w-auto"
+            >
+              I'm Interested
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -465,7 +490,38 @@ const FormDetails = () => {
         </div>
       )}
 
-      {/* Submission Form Modal */}
+      {/* Login Message Dialog */}
+      <Dialog open={showLoginMessage} onOpenChange={setShowLoginMessage}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Want to track your application?</DialogTitle>
+            <DialogDescription className="pt-4 space-y-4">
+              <p>
+                If you login before submitting your application, you'll be able to:
+              </p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>See if the form owner has read your application</li>
+                <li>Track all your submitted applications in one place</li>
+                <li>Get notified when there are updates</li>
+              </ul>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-4">
+            <Button onClick={handleLogin} className="w-full">
+              Login First
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleProceedAsGuest} 
+              className="w-full"
+            >
+              Continue as Guest
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Submission Form Dialog */}
       {showSubmissionForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">

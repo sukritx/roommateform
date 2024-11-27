@@ -88,33 +88,32 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check authentication first
-    if (!authLoading) {
-      if (!isAuthenticated) {
-        navigate('/signin', { state: { from: '/dashboard' } });
-        return;
+    const checkAuthAndFetch = async () => {
+      if (!authLoading) {
+        if (!isAuthenticated) {
+          navigate('/signin', { state: { from: '/dashboard' } });
+          return;
+        }
+        try {
+          setIsLoading(true);
+          setError(null);
+          const response = await api.get('/forms/my-listings');
+          setForms(response.data);
+        } catch (error) {
+          console.error('Error fetching forms:', error);
+          if (error.response?.status === 401) {
+            navigate('/signin', { state: { from: '/dashboard' } });
+          } else {
+            setError('Failed to load your forms. Please try again later.');
+          }
+        } finally {
+          setIsLoading(false);
+        }
       }
-      fetchForms();
-    }
-  }, [isAuthenticated, authLoading, navigate]);
+    };
 
-  const fetchForms = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await api.get('/forms/my-listings');
-      setForms(response.data);
-    } catch (error) {
-      console.error('Error fetching forms:', error);
-      if (error.response?.status === 401) {
-        navigate('/signin', { state: { from: '/dashboard' } });
-      } else {
-        setError('Failed to load your forms. Please try again later.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    checkAuthAndFetch();
+  }, [isAuthenticated, authLoading, navigate]);
 
   if (authLoading || isLoading) {
     return <div className="flex justify-center items-center min-h-screen"><Loading /></div>;

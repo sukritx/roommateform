@@ -13,18 +13,17 @@ const {
 
 const router = express.Router();
 
-// Public routes - no authentication required
+// Public routes - exact matches first
 router.get('/', getForms);
 
-// Protected routes - require authentication
-router.use(authenticateToken);
-router.get('/my-listings', getMyListings);
-router.post('/', fileUpload({ destination: 'room-images' }), createForm);
-router.put('/:id', updateForm);
-router.post('/:id/favorite', toggleFavorite);
-router.post('/:id/boost', boostListing);
+// Protected routes with specific paths
+router.get('/my-listings', authenticateToken, getMyListings);
+router.post('/create', authenticateToken, fileUpload({ destination: 'room-images' }), createForm);
+router.put('/edit/:id', authenticateToken, updateForm);
+router.post('/favorite/:id', authenticateToken, toggleFavorite);
+router.post('/boost/:id', authenticateToken, boostListing);
 
-// Public route that needs to be after protected routes to avoid conflicts
+// Wildcard route must be last
 router.get('/:id', getFormById);
 
 module.exports = router;

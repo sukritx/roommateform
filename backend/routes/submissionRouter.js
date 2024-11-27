@@ -15,6 +15,7 @@ router.post('/', createSubmission);
 
 // Protected routes - require authentication
 router.use(authenticateToken);
+// My submissions route needs to be before :formId route to avoid conflicts
 router.get('/my-submissions', getUserSubmissions);
 router.get('/form/:formId', getSubmissions);
 router.put('/:submissionId/status', updateSubmissionStatus);
