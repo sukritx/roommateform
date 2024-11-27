@@ -1,5 +1,6 @@
 const Submission = require('../models/submission.model');
 const Form = require('../models/form.model');
+const jwt = require('jsonwebtoken');
 
 const createSubmission = async (req, res) => {
   try {
@@ -8,14 +9,23 @@ const createSubmission = async (req, res) => {
       return res.status(404).json({ message: 'Form not found' });
     }
 
-    // Create submission with or without user ID
+    // Create base submission data
     const submissionData = {
       form: req.body.formId,
-      submitter: {
-        ...req.body.submitter,
-        userId: req.user?.id // Optional: will be undefined for unauthenticated users
-      }
+      submitter: req.body.submitter
     };
+
+    // If there's an authenticated user (checked by cookie token), add their ID
+    const token = req.cookies.token;
+    if (token) {
+      try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        submissionData.submitter.userId = user.id;
+      } catch (err) {
+        // Token verification failed, continue without user ID
+        console.log('Token verification failed:', err.message);
+      }
+    }
 
     const submission = new Submission(submissionData);
     const savedSubmission = await submission.save();
