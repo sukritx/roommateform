@@ -73,20 +73,21 @@ const Home = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="max-w-xl mx-auto mb-8"
+          className="max-w-3xl mx-auto mb-8 md:mb-12 px-4 sm:px-6"
         >
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-6 p-4 sm:p-8 bg-card rounded-xl shadow-lg">
             <div className="flex-1">
+              <label className="text-base md:text-lg font-medium mb-2 md:mb-3 block">Select Your University</label>
               <UniversitySearch
                 value={selectedUniversity}
                 onChange={setSelectedUniversity}
-                className="w-full"
+                className="w-full text-base md:text-lg py-4 md:py-6"
               />
             </div>
             <Button 
               onClick={handleSearch}
               size="lg"
-              className="whitespace-nowrap"
+              className="w-full sm:w-auto text-base md:text-lg py-6 md:py-8 px-8 md:px-12 bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 whitespace-nowrap sm:self-end"
               disabled={!selectedUniversity}
             >
               Find Rooms
@@ -98,12 +99,13 @@ const Home = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex justify-center px-4 sm:px-6"
         >
-          <Button asChild size="lg" variant="outline" className="text-lg">
-            <Link to="/browse">Browse All Rooms</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="text-lg">
+          <Button 
+            asChild 
+            size="lg" 
+            className="w-full sm:w-auto text-base md:text-xl py-6 md:py-8 px-8 md:px-12 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+          >
             <Link to="/create-form">Create Listing</Link>
           </Button>
         </motion.div>
