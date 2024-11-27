@@ -7,6 +7,7 @@ import api from '../utils/api';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import { Loading } from "@/components/ui/loading";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const SubmissionsDashboard = () => {
   const navigate = useNavigate();
@@ -111,186 +112,199 @@ const SubmissionsDashboard = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">My Forms Submissions</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">My Forms Submissions</h1>
       
-      {forms.map((form) => (
-        <Card key={form._id} className="mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-xl">
-                {form.roomDetails?.name || 'Unnamed Form'}
-                {getUnreadCount(form.submissions) > 0 && (
-                  <span className="ml-3 px-3 py-1 bg-blue-500 text-white text-sm rounded-full">
-                    {getUnreadCount(form.submissions)} New
-                  </span>
-                )}
-              </CardTitle>
-              <Button variant="outline" onClick={() => navigate(`/forms/${form._id}`)}>
-                View Form
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {form.error ? (
-              <div className="text-red-500">{form.error}</div>
-            ) : (
-              <div className="space-y-4">
-                {form.submissions.length > 0 ? (
-                  form.submissions.map((submission) => (
+      <div className="space-y-6">
+        {forms.map((form) => (
+          <Card key={form._id} className="overflow-hidden">
+            <CardHeader className="border-b bg-gray-50/50">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg md:text-xl break-words">
+                    {form.roomDetails?.name || 'Unnamed Form'}
+                    {getUnreadCount(form.submissions) > 0 && (
+                      <span className="ml-2 px-2.5 py-0.5 bg-blue-500 text-white text-sm rounded-full inline-flex items-center">
+                        {getUnreadCount(form.submissions)} New
+                      </span>
+                    )}
+                  </CardTitle>
+                  <p className="text-sm text-gray-500">
+                    {form.submissions.length} {form.submissions.length === 1 ? 'submission' : 'submissions'}
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate(`/forms/${form._id}`)}
+                  className="w-full sm:w-auto"
+                >
+                  View Form
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {form.error ? (
+                <div className="p-4 text-red-500">{form.error}</div>
+              ) : form.submissions.length === 0 ? (
+                <div className="p-4 text-gray-500 text-center">No submissions yet</div>
+              ) : (
+                <div className="divide-y">
+                  {form.submissions.map((submission) => (
                     <div
                       key={submission._id}
                       onClick={() => handleSubmissionClick(form._id, submission)}
-                      className={`p-4 rounded-lg border cursor-pointer transition-colors hover:border-primary ${
-                        !submission.isRead ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
+                      className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${
+                        !submission.isRead ? 'bg-blue-50/50' : ''
                       }`}
                     >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-semibold flex items-center">
-                            {submission.submitter.faculty} Student
+                      <div className="flex flex-col sm:flex-row justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="flex items-start gap-2">
+                            <h3 className="font-medium">
+                              {submission.submitter.faculty} Student
+                            </h3>
                             {!submission.isRead && (
-                              <span className="ml-2 text-blue-600 text-sm">• New</span>
+                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                New
+                              </span>
                             )}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            Submitted {format(new Date(submission.createdAt), 'MMM d, yyyy h:mm a')}
-                          </p>
+                          </div>
+                          <div className="text-sm text-gray-500 space-y-1">
+                            <p>Year: {submission.submitter.year}</p>
+                            <p>Submitted: {format(new Date(submission.createdAt), 'PPP')}</p>
+                          </div>
                         </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="self-start sm:self-center whitespace-nowrap"
+                        >
+                          View Details →
+                        </Button>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500">No submissions yet.</p>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      {forms.length === 0 && (
-        <div className="text-center text-gray-500">
-          <p>You haven't created any forms yet.</p>
-          <Button className="mt-4" onClick={() => navigate('/create-form')}>
-            Create Your First Form
-          </Button>
-        </div>
-      )}
-
-      {/* Submission Details Modal */}
       {selectedSubmission && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold">Roommate Application</h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Submitted on {format(new Date(selectedSubmission.createdAt), 'MMMM d, yyyy h:mm a')}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSelectedSubmission(null)}
-                >
-                  <X className="h-6 w-6" />
-                </Button>
-              </div>
-
-              <div className="space-y-8">
-                {/* Basic Information */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Faculty:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.faculty || 'Not specified'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Year:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.year || 'Not specified'}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Gender:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.gender || 'Not specified'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lifestyle */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Lifestyle</h3>
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Schedule:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.morningOrLateNight}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Cleanliness:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.cleanliness}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Partying:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.partying}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Smoking:</span>
-                      <span className="font-medium">{selectedSubmission.submitter.smoking}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Personality & Hobbies */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Personality & Interests</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <span className="text-gray-600">Personality:</span>
-                      <p className="mt-1 font-medium">{selectedSubmission.submitter.personality}</p>
-                    </div>
-                    {selectedSubmission.submitter.hobbies?.length > 0 && (
+        <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl mb-4">Submission Details</DialogTitle>
+              <DialogDescription>
+                <div className="space-y-6">
+                  {/* Basic Information */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Basic Information</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                       <div>
-                        <span className="text-gray-600">Hobbies:</span>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {selectedSubmission.submitter.hobbies.map((hobby, index) => (
-                            <span 
-                              key={index}
-                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                            >
-                              {hobby}
-                            </span>
+                        <h4 className="font-semibold mb-1">Gender</h4>
+                        <p>{selectedSubmission.submitter.gender || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Faculty</h4>
+                        <p>{selectedSubmission.submitter.faculty || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Year</h4>
+                        <p>{selectedSubmission.submitter.year || 'Not specified'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lifestyle Preferences */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Lifestyle Preferences</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                      <div>
+                        <h4 className="font-semibold mb-1">Morning/Night Person</h4>
+                        <p>{selectedSubmission.submitter.morningOrLateNight || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Cleanliness Level</h4>
+                        <p>{selectedSubmission.submitter.cleanliness || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Partying</h4>
+                        <p>{selectedSubmission.submitter.partying || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Smoking</h4>
+                        <p>{selectedSubmission.submitter.smoking || 'Not specified'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Personality & Hobbies */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Personality & Interests</h3>
+                    <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                      <div>
+                        <h4 className="font-semibold mb-1">Personality</h4>
+                        <p className="whitespace-pre-wrap">{selectedSubmission.submitter.personality || 'Not specified'}</p>
+                      </div>
+                      
+                      {selectedSubmission.submitter.hobbies?.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2">Hobbies</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedSubmission.submitter.hobbies.map((hobby, index) => (
+                              <span
+                                key={index}
+                                className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                              >
+                                {hobby}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Contact Information</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      {selectedSubmission.submitter.contactInfo?.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {selectedSubmission.submitter.contactInfo.map((contact, index) => (
+                            <div key={index}>
+                              <h4 className="font-semibold mb-1 capitalize">{contact.platform}</h4>
+                              <p>{contact.username}</p>
+                            </div>
                           ))}
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <p>No contact information provided</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Note to Room Owner */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Note to Room Owner</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <p className="whitespace-pre-wrap">{selectedSubmission.notes || 'No additional notes'}</p>
+                    </div>
+                  </div>
+
+                  {/* Submission Info */}
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Submission Information</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <p>Submitted on: {format(new Date(selectedSubmission.createdAt), 'PPP pp')}</p>
+                    </div>
                   </div>
                 </div>
-
-                {/* Contact Information */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedSubmission.submitter.contactInfo?.map((contact, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <span className="capitalize text-gray-600 w-24">{contact.platform}:</span>
-                        <span className="font-medium">{contact.username}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Notes */}
-                {selectedSubmission.submitter.notes && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold mb-4">Additional Notes</h3>
-                    <p className="text-gray-800 whitespace-pre-wrap">{selectedSubmission.submitter.notes}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

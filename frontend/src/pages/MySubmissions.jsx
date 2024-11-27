@@ -78,31 +78,31 @@ const MySubmissions = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6">My Applications</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 px-4">My Applications</h1>
       {submissions.length === 0 ? (
-        <Card>
+        <Card className="mx-4">
           <CardContent className="pt-6">
             <p className="text-gray-600">You haven't submitted any applications yet.</p>
             <Button
               onClick={() => navigate('/')}
-              className="mt-4"
+              className="mt-4 w-full sm:w-auto"
             >
               Browse Listings
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 px-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {submissions.map((submission) => (
             <Card key={submission._id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="relative">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-xl">
+              <CardHeader className="relative space-y-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                  <CardTitle className="text-lg md:text-xl break-words">
                     {submission.form?.roomDetails?.name || 'Listing'}
                   </CardTitle>
                   <Badge 
                     variant={submission.isRead ? "secondary" : "default"}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 whitespace-nowrap"
                   >
                     {submission.isRead ? (
                       <>
@@ -122,27 +122,29 @@ const MySubmissions = () => {
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-semibold">Faculty:</span>{' '}
-                    {submission.submitter.faculty || 'N/A'}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Year:</span>{' '}
-                    {submission.submitter.year || 'N/A'}
-                  </p>
-                  <div className="flex gap-2 mt-4">
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="font-semibold text-sm">Faculty</p>
+                      <p className="text-sm break-words">{submission.submitter.faculty || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Year</p>
+                      <p className="text-sm break-words">{submission.submitter.year || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
                     <Button
                       onClick={() => navigate(`/forms/${submission.form?._id}`)}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 text-sm"
                     >
                       View Listing
                     </Button>
                     <Button
                       onClick={() => setSelectedSubmission(submission)}
                       variant="secondary"
-                      className="flex-1"
+                      className="flex-1 text-sm"
                     >
                       View Details
                     </Button>
@@ -155,86 +157,117 @@ const MySubmissions = () => {
       )}
 
       <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Application Details</span>
-              <Badge 
-                variant={selectedSubmission?.isRead ? "secondary" : "default"}
-                className="flex items-center gap-1"
-              >
-                {selectedSubmission?.isRead ? (
-                  <>
-                    <Eye className="h-3 w-3" />
-                    <span>Seen</span>
-                  </>
-                ) : (
-                  <>
-                    <EyeOff className="h-3 w-3" />
-                    <span>Not seen yet</span>
-                  </>
-                )}
-              </Badge>
-            </DialogTitle>
+            <DialogTitle className="text-xl mb-4">Application Details</DialogTitle>
             <DialogDescription>
-              View the details of your submitted application
-            </DialogDescription>
-          </DialogHeader>
-          {selectedSubmission && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-6">
+                {/* Basic Information */}
                 <div>
-                  <h3 className="font-semibold mb-2">Basic Information</h3>
-                  <p><span className="text-gray-600">Faculty:</span> {selectedSubmission.submitter.faculty}</p>
-                  <p><span className="text-gray-600">Year:</span> {selectedSubmission.submitter.year}</p>
-                  <p><span className="text-gray-600">Gender:</span> {selectedSubmission.submitter.gender}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Lifestyle</h3>
-                  <p><span className="text-gray-600">Schedule:</span> {selectedSubmission.submitter.morningOrLateNight}</p>
-                  <p><span className="text-gray-600">Cleanliness:</span> {selectedSubmission.submitter.cleanliness}</p>
-                  <p><span className="text-gray-600">Partying:</span> {selectedSubmission.submitter.partying}</p>
-                  <p><span className="text-gray-600">Smoking:</span> {selectedSubmission.submitter.smoking}</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Personality & Hobbies</h3>
-                <p>{selectedSubmission.submitter.personality}</p>
-                {selectedSubmission.submitter.hobbies?.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-gray-600">Hobbies:</p>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {selectedSubmission.submitter.hobbies.map((hobby, index) => (
-                        <span key={index} className="bg-secondary px-2 py-1 rounded-md text-sm">
-                          {hobby}
-                        </span>
-                      ))}
+                  <h3 className="font-semibold text-lg mb-3">Basic Information</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <h4 className="font-semibold mb-1">Gender</h4>
+                      <p>{selectedSubmission?.submitter.gender || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Faculty</h4>
+                      <p>{selectedSubmission?.submitter.faculty || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Year</h4>
+                      <p>{selectedSubmission?.submitter.year || 'Not specified'}</p>
                     </div>
                   </div>
-                )}
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Contact Information</h3>
-                <div className="space-y-1">
-                  {selectedSubmission.submitter.contactInfo.map((contact, index) => (
-                    <p key={index}>
-                      <span className="text-gray-600 capitalize">{contact.platform}:</span>{' '}
-                      {contact.username}
-                    </p>
-                  ))}
                 </div>
-              </div>
 
-              {selectedSubmission.submitter.notes && (
+                {/* Lifestyle Preferences */}
                 <div>
-                  <h3 className="font-semibold mb-2">Additional Notes</h3>
-                  <p>{selectedSubmission.submitter.notes}</p>
+                  <h3 className="font-semibold text-lg mb-3">Lifestyle Preferences</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <h4 className="font-semibold mb-1">Morning/Night Person</h4>
+                      <p>{selectedSubmission?.submitter.morningOrLateNight || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Cleanliness Level</h4>
+                      <p>{selectedSubmission?.submitter.cleanliness || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Partying</h4>
+                      <p>{selectedSubmission?.submitter.partying || 'Not specified'}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">Smoking</h4>
+                      <p>{selectedSubmission?.submitter.smoking || 'Not specified'}</p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          )}
+
+                {/* Personality & Hobbies */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Personality & Interests</h3>
+                  <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <h4 className="font-semibold mb-1">Personality</h4>
+                      <p className="whitespace-pre-wrap">{selectedSubmission?.submitter.personality || 'Not specified'}</p>
+                    </div>
+                    
+                    {selectedSubmission?.submitter.hobbies?.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">Hobbies</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedSubmission.submitter.hobbies.map((hobby, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                            >
+                              {hobby}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Contact Information</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    {selectedSubmission?.submitter.contactInfo?.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {selectedSubmission.submitter.contactInfo.map((contact, index) => (
+                          <div key={index}>
+                            <h4 className="font-semibold mb-1 capitalize">{contact.platform}</h4>
+                            <p>{contact.username}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p>No contact information provided</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Note to Room Owner */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Note to Room Owner</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="whitespace-pre-wrap">{selectedSubmission?.notes || 'No additional notes'}</p>
+                  </div>
+                </div>
+
+                {/* Submission Info */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Submission Information</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p>Submitted on: {selectedSubmission && format(new Date(selectedSubmission.createdAt), 'PPP pp')}</p>
+                  </div>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
         </DialogContent>
       </Dialog>
     </div>
