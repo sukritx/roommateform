@@ -13,20 +13,18 @@ const {
 
 const router = express.Router();
 
-// Public routes
+// Public routes - no authentication required
 router.get('/', getForms);
-router.get('/:id', getFormById);
 
-// Protected routes
-router.use(authenticateToken); // All routes below this will require authentication
-
-// Place specific routes before parameter routes
+// Protected routes - require authentication
+router.use(authenticateToken);
 router.get('/my-listings', getMyListings);
 router.post('/', fileUpload({ destination: 'room-images' }), createForm);
-
-// Parameter routes should come last
 router.put('/:id', updateForm);
 router.post('/:id/favorite', toggleFavorite);
 router.post('/:id/boost', boostListing);
 
-module.exports = router; 
+// Public route that needs to be after protected routes to avoid conflicts
+router.get('/:id', getFormById);
+
+module.exports = router;

@@ -39,6 +39,9 @@ const FormDetails = () => {
 
   useEffect(() => {
     fetchForm();
+  }, [id]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       checkFavoriteStatus();
       fetchSubmissions();
@@ -47,16 +50,22 @@ const FormDetails = () => {
 
   const fetchForm = async () => {
     try {
+      setLoading(true);
       const response = await api.get(`/forms/${id}`);
       setForm(response.data);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching form:', error);
+      // Don't redirect on 401 for form details
+      if (error.response?.status !== 401) {
+        navigate('/');
+      }
+    } finally {
       setLoading(false);
     }
   };
 
   const checkFavoriteStatus = async () => {
+    if (!isAuthenticated) return;
     try {
       const response = await api.get('/user/favorites');
       setIsFavorited(response.data.some(favorite => favorite._id === id));
@@ -66,6 +75,7 @@ const FormDetails = () => {
   };
 
   const fetchSubmissions = async () => {
+    if (!isAuthenticated) return;
     try {
       const response = await api.get(`/submissions/form/${id}`);
       setSubmissions(response.data);
@@ -77,19 +87,22 @@ const FormDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/submissions', {
+      const submissionData = {
         formId: id,
-        ...submission
-      });
+        submitter: {
+          ...submission,
+          contactInfo: submission.contactInfo.filter(contact => 
+            contact.platform && contact.username
+          )
+        }
+      };
+
+      await api.post('/submissions', submissionData);
       setShowSubmissionForm(false);
-      if (isAuthenticated) {
-        fetchSubmissions();
-      } else {
-        alert('Your submission has been sent successfully! The listing owner will contact you if interested.');
-      }
+      alert('Your application has been submitted successfully!');
     } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Failed to submit form. Please try again.');
+      console.error('Error submitting application:', error);
+      alert('Failed to submit your application. Please try again.');
     }
   };
 
@@ -178,7 +191,12 @@ const FormDetails = () => {
   }
 
   if (!form) {
-    return <div>Form not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <p className="text-red-500 mb-4">Form not found or error loading form.</p>
+        <Button onClick={() => navigate('/')}>Back to Home</Button>
+      </div>
+    );
   }
 
   return (
@@ -374,13 +392,7 @@ const FormDetails = () => {
           <Button
             className="w-full"
             size="lg"
-            onClick={() => {
-              if (!isAuthenticated) {
-                navigate('/signin', { state: { from: `/forms/${id}` } });
-                return;
-              }
-              setShowSubmissionForm(true);
-            }}
+            onClick={() => setShowSubmissionForm(true)}
           >
             I'm Interested
           </Button>

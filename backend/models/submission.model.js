@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const submissionSchema = new mongoose.Schema({
   form: { type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
   submitter: {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    personality: String,
-    morningOrLateNight: String,
-    cleanliness: String,
-    partying: String,
-    smoking: String,
-    gender: String,
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    personality: { type: String, required: true },
+    morningOrLateNight: { type: String, required: true },
+    cleanliness: { type: String, required: true },
+    partying: { type: String, required: true },
+    smoking: { type: String, required: true },
+    gender: { type: String, required: true },
     hobbies: [String],
     contactInfo: [
       {

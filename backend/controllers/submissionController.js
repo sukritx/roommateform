@@ -8,17 +8,16 @@ const createSubmission = async (req, res) => {
       return res.status(404).json({ message: 'Form not found' });
     }
 
-    // Add the user ID to the submitter object
-    const submitterData = {
-      ...req.body.submitter,
-      userId: req.user.id
+    // Create submission with or without user ID
+    const submissionData = {
+      form: req.body.formId,
+      submitter: {
+        ...req.body.submitter,
+        userId: req.user?.id // Optional: will be undefined for unauthenticated users
+      }
     };
 
-    const submission = new Submission({
-      form: req.body.formId,
-      submitter: submitterData
-    });
-
+    const submission = new Submission(submissionData);
     const savedSubmission = await submission.save();
 
     // Update form with new submission
@@ -29,6 +28,7 @@ const createSubmission = async (req, res) => {
 
     res.status(201).json(savedSubmission);
   } catch (error) {
+    console.error('Error creating submission:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -57,12 +57,20 @@ const getSubmissions = async (req, res) => {
 
 const getUserSubmissions = async (req, res) => {
   try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: 'Authentication required to view your submissions' });
+    }
+
     const submissions = await Submission.find({ 'submitter.userId': req.user.id })
-      .populate('form', 'roomDetails.name location price')
+      .populate({
+        path: 'form',
+        select: 'roomDetails.name roomDetails.nearbyUniversity roomDetails.monthlyRent roomDetails.currency'
+      })
       .sort({ createdAt: -1 });
 
     res.json(submissions);
   } catch (error) {
+    console.error('Error getting user submissions:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -104,7 +112,7 @@ const markAsRead = async (req, res) => {
       req.params.submissionId,
       { isRead: true },
       { new: true }
-    ).populate('form', 'roomDetails.name');
+    );
 
     res.json(updatedSubmission);
   } catch (error) {

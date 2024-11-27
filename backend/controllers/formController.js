@@ -173,11 +173,21 @@ const boostListing = async (req, res) => {
 
 const getMyListings = async (req, res) => {
   try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
     const forms = await Form.find({ owner: req.user.id })
+      .populate('owner', 'name email')
       .sort({ createdAt: -1 });
+
     res.json(forms);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error in getMyListings:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch your listings',
+      error: error.message 
+    });
   }
 };
 

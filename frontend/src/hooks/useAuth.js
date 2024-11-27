@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, createContext } from 'react';
-import PropTypes from 'prop-types'; // Add this import
-import api from '../utils/api'; // Add this import
+import PropTypes from 'prop-types'; 
+import api from '../utils/api'; 
 
 const AuthContext = createContext(null);
 
@@ -11,16 +11,22 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      setLoading(true);
       const response = await api.get('/user/me');
-      setUser(response.data);
-      setIsAuthenticated(true);
+      if (response.data) {
+        setUser(response.data);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     } catch (error) {
       console.error('Authentication error:', error);
       setIsAuthenticated(false);
       setUser(null);
-      // Don't redirect here, let the API interceptor handle redirects
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,10 +67,10 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     user,
     loading,
-    checkAuthStatus,
     login,
     logout,
-    signup
+    signup,
+    checkAuthStatus
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
