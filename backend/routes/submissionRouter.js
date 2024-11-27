@@ -10,10 +10,11 @@ const {
 
 const router = express.Router();
 
-// All submission routes require authentication
-router.use(authenticateToken);
-
+// Public routes
 router.post('/', createSubmission);
+
+// Protected routes
+router.use(authenticateToken);
 router.get('/my-submissions', getUserSubmissions);
 router.get('/form/:formId', getSubmissions);
 router.put('/:submissionId/status', updateSubmissionStatus);

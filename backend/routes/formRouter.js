@@ -15,6 +15,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getForms);
+router.get('/:id', getFormById);
 
 // Protected routes
 router.use(authenticateToken); // All routes below this will require authentication
@@ -24,7 +25,6 @@ router.get('/my-listings', getMyListings);
 router.post('/', fileUpload({ destination: 'room-images' }), createForm);
 
 // Parameter routes should come last
-router.get('/:id', getFormById);
 router.put('/:id', updateForm);
 router.post('/:id/favorite', toggleFavorite);
 router.post('/:id/boost', boostListing);

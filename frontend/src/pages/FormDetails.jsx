@@ -49,9 +49,9 @@ const FormDetails = () => {
     try {
       const response = await api.get(`/forms/${id}`);
       setForm(response.data);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching form:', error);
-    } finally {
       setLoading(false);
     }
   };
@@ -74,12 +74,30 @@ const FormDetails = () => {
     }
   };
 
-  const handleToggleFavorite = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/submissions', {
+        formId: id,
+        ...submission
+      });
+      setShowSubmissionForm(false);
+      if (isAuthenticated) {
+        fetchSubmissions();
+      } else {
+        alert('Your submission has been sent successfully! The listing owner will contact you if interested.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to submit form. Please try again.');
+    }
+  };
+
+  const toggleFavorite = async () => {
     if (!isAuthenticated) {
-      navigate('/signin');
+      navigate('/signin', { state: { from: `/forms/${id}` } });
       return;
     }
-
     try {
       await api.post(`/forms/${id}/favorite`);
       setIsFavorited(!isFavorited);
@@ -140,31 +158,10 @@ const FormDetails = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isAuthenticated) {
-      navigate('/signin');
-      return;
-    }
-    try {
-      await api.post('/submissions', {
-        formId: id,
-        submitter: {
-          ...submission,
-          userId: user.id
-        }
-      });
-      setShowSubmissionForm(false);
-      navigate('/my-submissions');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-  };
-
   const markAsRead = async (submissionId) => {
     try {
       await api.put(`/submissions/${submissionId}/read`);
-      setSubmissions(submissions.map(sub => 
+      setSubmissions(submissions.map(sub =>
         sub._id === submissionId ? { ...sub, isRead: true } : sub
       ));
     } catch (error) {
@@ -217,7 +214,7 @@ const FormDetails = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleToggleFavorite}
+          onClick={toggleFavorite}
           className={`${isFavorited ? 'text-red-500' : 'text-gray-500'} hover:text-red-500`}
         >
           <Heart className={`h-6 w-6 ${isFavorited ? 'fill-current' : ''}`} />
@@ -379,7 +376,7 @@ const FormDetails = () => {
             size="lg"
             onClick={() => {
               if (!isAuthenticated) {
-                navigate('/signin');
+                navigate('/signin', { state: { from: `/forms/${id}` } });
                 return;
               }
               setShowSubmissionForm(true);
@@ -406,8 +403,8 @@ const FormDetails = () => {
                     )}
                   </CardTitle>
                   {!submission.isRead && (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => markAsRead(submission._id)}
                     >
@@ -591,8 +588,8 @@ const FormDetails = () => {
                         }
                       }}
                     />
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       onClick={addHobby}
                       variant="outline"
                     >
@@ -601,8 +598,8 @@ const FormDetails = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {submission.hobbies.map((hobby, index) => (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2"
                       >
                         {hobby}
@@ -685,9 +682,9 @@ const FormDetails = () => {
 
                 <div className="flex gap-4">
                   <Button type="submit" className="flex-1">Submit</Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setShowSubmissionForm(false)}
                     className="flex-1"
                   >
