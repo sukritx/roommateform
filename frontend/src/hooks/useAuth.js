@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Authentication error:', error);
       setIsAuthenticated(false);
       setUser(null);
+      // Don't redirect here, let the API interceptor handle redirects
     }
     setLoading(false);
   };
