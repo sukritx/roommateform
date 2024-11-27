@@ -18,7 +18,7 @@ function App() {
     <AuthProvider>
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto py-8 mt-[57px]">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<Signin />} />

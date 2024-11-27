@@ -1,16 +1,34 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X } from 'lucide-react'; // Import icons
+import { Menu, X } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 
 const Navbar = () => {
   const { isAuthenticated, loading, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // Prevent scroll when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   if (loading) {
     return (
-      <nav className="bg-background border-b">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
         <div className="container mx-auto px-4 py-3">
           <Link to="/" className="text-xl font-bold">Roommateform</Link>
         </div>
@@ -19,49 +37,47 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-background border-b">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link to="/" className="text-xl font-bold">Roommateform</Link>
           
           {/* Mobile menu button */}
           <button 
-            className="md:hidden"
+            className="md:hidden p-2 hover:bg-accent rounded-lg transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link to="/browse" className="text-sm hover:text-primary">
-              Browse Rooms
-            </Link>
-            <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               {isAuthenticated ? (
                 <>
-                  <Button asChild variant="outline">
+                  <Button asChild variant="outline" size="sm">
                     <Link to="/create-form">Create Listing</Link>
                   </Button>
-                  <Button asChild>
+                  <Button asChild size="sm">
                     <Link to="/dashboard">Dashboard</Link>
                   </Button>
-                  <Button asChild variant="outline">
+                  <Button asChild variant="outline" size="sm">
                     <Link to="/submissions">Submissions</Link>
                   </Button>
-                  <Button asChild variant="outline">
+                  <Button asChild variant="outline" size="sm">
                     <Link to="/my-submissions">My Applications</Link>
                   </Button>
-                  <Button variant="ghost" onClick={logout}>
+                  <Button variant="ghost" size="sm" onClick={logout}>
                     Logout
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button asChild variant="ghost">
+                  <Button asChild variant="ghost" size="sm">
                     <Link to="/signin">Sign In</Link>
                   </Button>
-                  <Button asChild>
+                  <Button asChild size="sm">
                     <Link to="/signup">Sign Up</Link>
                   </Button>
                 </>
@@ -72,61 +88,44 @@ const Navbar = () => {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-4">
-            <Link 
-              to="/browse" 
-              className="block text-sm hover:text-primary"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Browse Rooms
-            </Link>
-            {isAuthenticated ? (
-              <div className="space-y-2">
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/create-form" onClick={() => setIsMenuOpen(false)}>
-                    Create Listing
-                  </Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    Dashboard
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/submissions" onClick={() => setIsMenuOpen(false)}>
-                    Submissions
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/my-submissions" onClick={() => setIsMenuOpen(false)}>
-                    My Applications
-                  </Link>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full"
-                >
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Button asChild variant="ghost" className="w-full">
-                  <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
-                    Sign In
-                  </Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    Sign Up
-                  </Link>
-                </Button>
-              </div>
-            )}
+          <div className="fixed inset-0 top-[57px] bg-background z-50 md:hidden">
+            <div className="container mx-auto px-4 py-6 space-y-4 overflow-y-auto max-h-[calc(100vh-57px)]">
+              {isAuthenticated ? (
+                <div className="space-y-3">
+                  <Button asChild variant="default" className="w-full h-12 text-lg">
+                    <Link to="/create-form">Create Listing</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full h-12 text-lg">
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full h-12 text-lg">
+                    <Link to="/submissions">Submissions</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full h-12 text-lg">
+                    <Link to="/my-submissions">My Applications</Link>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full h-12 text-lg"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <Button asChild variant="default" className="w-full h-12 text-lg">
+                    <Link to="/signup">Sign Up</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full h-12 text-lg">
+                    <Link to="/signin">Sign In</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
